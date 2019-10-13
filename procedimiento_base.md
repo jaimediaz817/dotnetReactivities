@@ -12,3 +12,28 @@ luego nos salimos a la raíz y ejecutamos:
 
  y ejecutamos el proyecto en modo escucha de cambios:
  ditnet watch run
+
+
+
+
+
+
+
+
+ ================================ FONTNED ==================================
+ ===========================================================================
+ ===========================================================================
+
+
+Instalar MobX:
+en la raíz del proyecto frontend: client-app:
+
+npm install --save mobx mobx-react-lite
+
+
+
+
+
+
+
+
