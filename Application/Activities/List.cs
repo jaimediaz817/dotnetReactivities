@@ -29,7 +29,7 @@ namespace Application.Activities
 
             public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
             {
-                try
+                /*try
                 {
                     for (int i = 0; i < 10; i++)
                     {
@@ -41,8 +41,7 @@ namespace Application.Activities
                 catch (Exception ex) when (ex is TaskCanceledException)
                 {   
                     _logger.LogInformation("Task was cancelled");
-                }
-                
+                }*/
                 var activities = await _context.Activities.ToListAsync(cancellationToken);
                 return activities;
             }
