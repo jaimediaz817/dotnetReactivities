@@ -7,30 +7,41 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace API.Controllers {
-    [Route ("api/[controller]")]
+namespace API.Controllers
+{
+    [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase {
+    public class ValuesController : ControllerBase
+    {
         public DataContext _context { get; }
-        public ValuesController (DataContext context) {
+        public ValuesController(DataContext context)
+        {
             this._context = context;
 
         }
 
         // GET api/values
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Value>>> Get () {
+        public async Task<ActionResult<IEnumerable<Value>>> Get()
+        {
             //return new string[] { "value1", "value2" };
             var values = await _context.Values.ToListAsync();
             return Ok(values);
         }
 
         // GET api/values/5
-        [HttpGet ("{id}")]
-        public async Task<ActionResult<Value>> Get (int id) {
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Value>> Get(int id)
+        {
 
             //return "value";
             var value = await _context.Values.FindAsync(id);
+
+            if (value == null)
+            {
+                return NotFound();
+            }
+
             return Ok(value);
         }
 
@@ -38,14 +49,14 @@ namespace API.Controllers {
 
         // POST api/values
         [HttpPost]
-        public void Post ([FromBody] string value) { }
+        public void Post([FromBody] string value) { }
 
         // PUT api/values/5
-        [HttpPut ("{id}")]
-        public void Put (int id, [FromBody] string value) { }
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value) { }
 
         // DELETE api/values/5
-        [HttpDelete ("{id}")]
-        public void Delete (int id) { }
+        [HttpDelete("{id}")]
+        public void Delete(int id) { }
     }
 }

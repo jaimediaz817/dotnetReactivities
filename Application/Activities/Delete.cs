@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using Domain;
 using MediatR;
 using Persistence;
@@ -9,39 +11,34 @@ namespace Application.Activities
 {
     public class Delete
     {
-            public class Command : IRequest
+        public class Command : IRequest
+        {
+            public Guid Id { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Command>
+        {
+            private readonly DataContext _context;
+            public Handler(DataContext context)
             {
-                public Guid Id { get; set; }        
+                _context = context;
             }
-    
-            public class Handler : IRequestHandler<Command>
+
+            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                private readonly DataContext _context;
-                public Handler(DataContext context)
-                {
-                    _context = context;
-                }            
-    
-                public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
-                {   
-                    //  handke logic              
-                    var Activity = await _context.Activities.FindAsync(request.Id);
+                //  handke logic              
+                var activity = await _context.Activities.FindAsync(request.Id);
 
-                    if (Activity == null)
-                    {
-                        throw new Exception("No se pudo encontrar la actividad");
-                    }
+                if (activity == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { Activity = "Not found" });
 
-                    _context.Remove(Activity);
+                _context.Remove(activity);
 
-                    var success = await _context.SaveChangesAsync() > 0;
-                    if (success)
-                    {
-                        return Unit.Value;
-                    }
-    
-                    throw new Exception("Problema al guardar los cambios");
-                }
-            }        
+                var success = await _context.SaveChangesAsync() > 0;
+                if (success) return Unit.Value;
+
+                throw new Exception("Problema al guardar los cambios");
+            }
+        }
     }
 }

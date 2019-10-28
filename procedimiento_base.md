@@ -30,6 +30,13 @@ en la raíz del proyecto frontend: client-app:
 
 npm install --save mobx mobx-react-lite
 
+Historial de Mob-X
+
+## Toasted React:
+React-toastify
+npm install --save react-toastify
+
+
 
 
 

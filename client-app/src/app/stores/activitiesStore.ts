@@ -14,9 +14,7 @@ class ActivityStore {
 
   // PROPIEDADES CALCULDAS
   @computed get activitiesByDate() {
-    console.log(
-      this.groupActivitiesByDate(Array.from(this.activityRegistry.values()))
-    );
+    //console.log(this.groupActivitiesByDate(Array.from(this.activityRegistry.values())));
     return this.groupActivitiesByDate(
       Array.from(this.activityRegistry.values())
     );
@@ -58,7 +56,7 @@ class ActivityStore {
         });
 
         // probando la funcion
-        console.log(this.groupActivitiesByDate(activities));
+        //console.log(this.groupActivitiesByDate(activities));
 
         this.loadingInitial = false;
       });
@@ -67,6 +65,7 @@ class ActivityStore {
         console.log(error);
         this.loadingInitial = false;
       });
+      console.log(error);
     }
 
     // const activities = await Agent.Activities.list()
@@ -98,6 +97,7 @@ class ActivityStore {
           this.loadingInitial = false;
         });
         console.log(error);
+        throw error;        
       }
     }
   };

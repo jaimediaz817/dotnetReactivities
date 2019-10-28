@@ -9,23 +9,32 @@ import ActivityDetailedHeader from "./ActivityDetailedHeader";
 import ActivityDetailedInfo from "./ActivityDetailedInfo";
 import ActivityDetailedChat from "./ActivityDetailedChat";
 import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
+import NotFound from "../../../app/layout/NotFound";
 
 interface DetailParams {
   id: string;
 }
 
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
-  match
+  match,
+  history
 }) => {
   const activityStore = useContext(ActivityStore);
   const { activity: activity, loadActivity, loadingInitial } = activityStore;
 
   useEffect(() => {
-    loadActivity(match.params.id);
-  }, [loadActivity, match.params.id]);
+    loadActivity(match.params.id)
+    .catch(()=> {
+      history.push('/notfound');
+    })
+  }, [loadActivity, match.params.id, history]);
+
+  if (!activity)  
+    return <NotFound />
 
   if (loadingInitial || !activity)
     return <LoadingComponent content="Loading activity..." />;
+
   return (
     <Grid>
       <Grid.Column width={10}>
