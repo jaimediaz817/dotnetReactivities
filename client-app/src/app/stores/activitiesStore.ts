@@ -2,6 +2,8 @@ import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext, SyntheticEvent } from "react";
 import { IActivity } from "../models/activity";
 import Agent from "../api/Agent";
+import { history } from '../..';
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 
@@ -24,16 +26,19 @@ class ActivityStore {
   }
 
   // group
+  //Date.parse(a.date) - Date.parse(b.date)
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivities = activities.sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+      (a, b) => a.date.getTime() - b.date.getTime()
     );
     //return sortedActivities;
     //return Object.entries(sortedActivities);
     return Object.entries(
       sortedActivities.reduce(
         (activities, activity) => {
-          const date = activity.date.split("T")[0];
+          //const date = activity.date.split("T")[0];
+          const date =  activity.date.toISOString().split("T")[0];
+          // TODO: Convirtiendo al tipo especifico:
           activities[date] = activities[date]
             ? [...activities[date], activity]
             : [activity];
@@ -50,14 +55,16 @@ class ActivityStore {
     try {
       const activities = await Agent.Activities.list();
       runInAction("loading activities", () => {
-        activities.map(act => {
-          act.date = act.date.split(".")[0];
+
+        activities.forEach(act => {
+        //activities.map(act => {
+          // TODO: Refactor
+          //act.date = act.date.split(".")[0];
+          act.date = new Date(act.date);
           this.activityRegistry.set(act.id, act);
         });
-
         // probando la funcion
         //console.log(this.groupActivitiesByDate(activities));
-
         this.loadingInitial = false;
       });
     } catch (error) {
@@ -80,27 +87,47 @@ class ActivityStore {
     //     .finally(() => this.loadingInitial = false);
   };
 
+
+
+
+
+
+
+
   @action loadActivity = async (id: string) => {
     let activity = this.getActivity(id);
-    if (activity) {
+    if (activity) {      
       this.activity = activity;
+      return activity;
     } else {
       this.loadingInitial = true;
       try {
         activity = await Agent.Activities.details(id);
         runInAction("getting activity", () => {
+          activity.date = new Date(activity.date);
           this.activity = activity;
+          // asignando al manage
+          this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;
         });
+        // retornar la actividad
+        return activity;
       } catch (error) {
         runInAction("getting activity error", () => {
           this.loadingInitial = false;
         });
         console.log(error);
-        throw error;        
+        //throw error;        
       }
     }
   };
+
+
+
+
+
+
+
 
   @action clearActivity = () => {
     this.activity = null;
@@ -109,6 +136,21 @@ class ActivityStore {
   getActivity = (id: string) => {
     return this.activityRegistry.get(id);
   };
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
 
   // Crear actividad
   @action createActivity = async (activity: IActivity) => {
@@ -119,13 +161,19 @@ class ActivityStore {
         this.activityRegistry.set(activity.id, activity);
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`)
     } catch (error) {
       runInAction("create activity error", () => {
-        this.submitting = false;
-        console.log(error);
+        this.submitting = false;        
       });
+      toast.error('Hubo un problema al intentar subir la información');
+      console.log(error.response);
     }
   };
+
+
+
+
 
   @action editActivity = async (activity: IActivity) => {
     this.submitting = true;
@@ -136,11 +184,13 @@ class ActivityStore {
         this.activity = activity;
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`);
     } catch (error) {
       runInAction("edit activity error", () => {
-        this.submitting = false;
-        console.log(error);
+        this.submitting = false;        
       });
+      console.log(error.response);
+      toast.error('Hubo un problema al editar la información');
     }
   };
 

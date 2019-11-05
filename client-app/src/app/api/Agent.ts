@@ -28,6 +28,9 @@ axios.interceptors.response.use(undefined, error => {
         toast.error('Hubo un error interno en la aplicación');
     }
 
+    // TODO: por defecto, refactorizar
+    throw error;
+
 });
 
 const responseBody = (response: AxiosResponse) => response.data;
