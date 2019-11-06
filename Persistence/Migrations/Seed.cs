@@ -1,14 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence.Migrations
 {
     public class Seed
     {
-        public static void SeedData(DataContext context)
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
         {   
+            // TODO: verificando usuarios
+            if (!userManager.Users.Any())
+            {
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        DisplayName = "Bob",
+                        UserName = "jdiaz1",
+                        Email = "jaimeivan0017@gmail.com"
+                    }, 
+                    new AppUser
+                    {
+                        DisplayName = "Tom",
+                        UserName = "jdiaz2",
+                        Email = "jaimeivan0018@gmail.com"
+                    }, 
+                    new AppUser
+                    {
+                        DisplayName = "Marley",
+                        UserName = "jdiaz3",
+                        Email = "jaimeivan0019@gmail.com"
+                    }, 
+                    new AppUser
+                    {
+                        DisplayName = "John",
+                        UserName = "jdiaz4",
+                        Email = "jaimeivan0020@gmail.com"
+                    },                     
+                };
+
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+            }
+
             if (!context.Activities.Any())
             {
                 var activities = new List<Activity>
