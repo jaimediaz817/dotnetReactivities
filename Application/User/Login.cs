@@ -7,8 +7,6 @@ using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Persistence;
 
 namespace Application.User {
     public class Login {

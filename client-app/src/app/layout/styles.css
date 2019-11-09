@@ -37,3 +37,9 @@ body {
 }
 
 /*end home page styles*/
+
+
+/* CONTENEDORES GENERAL */
+.ui.inverted.menu {
+  margin-top: 0;
+}

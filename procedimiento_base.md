@@ -96,6 +96,16 @@ dotnet user-secrets list -p API/
 
 
 
+
+
+
+
+
+
+
+
+
+
 # ================================ FRONTEND ==================================
 ==============================================================================
 
@@ -147,3 +157,19 @@ npm install --save relavidate
 
 - Adaptación a TS:
 npm install @types/revalidate
+
+
+------------
+ ## Sección 13 (agregando nuevo modelo de autenticación en el cliente)
+
+ agregar esto en el agente: Agent.ts
+
+ [CODIGO]
+    // TODO: importando nuevo mosdwelo
+    const User = {
+        current: (): Promise<IUser> => requests.get('/user'),
+        login: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/login`, user),
+        register: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/register`, user),
+    }
+
+
